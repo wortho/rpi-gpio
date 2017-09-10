@@ -4,10 +4,11 @@
 
 dotnet publish -c Release -r linux-arm
 
-## deploy to Pi
+## initial deploy to Pi
 
 scp -r bin/Release/netcoreapp2.0/linux-arm/publish  pi@192.168.0.23:projects/rpi.gpio
 
+## update after rebuild
 scp -r bin/Release/netcoreapp2.0/linux-arm/publish/rpi.gpio*  pi@192.168.0.23:projects/rpi.gpio
 
 ## run on pi
