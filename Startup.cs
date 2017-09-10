@@ -33,7 +33,7 @@ namespace rpi.gpio
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseStaticFiles();
             app.UseMvc();
         }
     }
