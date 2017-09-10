@@ -17,7 +17,7 @@ chmod +x rpi.gpio
 export ASPNETCORE_URLS="http://*:5000"
 ./rpi.gpio
 
-## call endpoints
+## call status endpoints
 
 curl http://192.168.0.23:5000
 
@@ -25,6 +25,12 @@ curl http://192.168.0.23:5000/api/status
 
 curl http://192.168.0.23:5000/api/gpio
 
-curl -X PUT -H "Content-Type: application/json" -d null http://192.168.0.23:5000/api/motor 
+## turn off all motors
+curl -X PUT -H "Content-Type: application/json" -d 'false' http://192.168.0.23:5000/api/motor 
 
+## left motor forwards
 curl -X PUT -H "Content-Type: application/json" -d 'true' http://192.168.0.23:5000/api/motor/0
+
+
+## right motor backwards
+curl -X PUT -H "Content-Type: application/json" -d 'false' http://192.168.0.23:5000/api/motor/1
