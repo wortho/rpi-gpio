@@ -16,12 +16,12 @@ namespace rpi.gpio.Controllers
         public IEnumerable<string> Get()
         {
             var status = new List<string>();
-            foreach (var pin in Pi.Gpio)
+            foreach (var pin in Pi.Gpio.Pins)
             {
                  if (pin.Capabilities.Contains(PinCapability.GP))
                  {
                     pin.PinMode = GpioPinDriveMode.Input;
-                    status.Add($"{pin.Name} {pin.Read()}");
+                    status.Add($"WiringPiPinNumber: {pin.WiringPiPinNumber} Name: {pin.Name} BcmPinNumber: {pin.BcmPinNumber} Value: {pin.Read()}\n");
                  }
             }
             return status;

@@ -13,6 +13,10 @@ namespace rpi.gpio.Controllers
     [Route("api/[controller]")]
     public class MotorController : Controller
     {
+        private const WiringPiPin LeftMotorAPin = WiringPiPin.Pin11;
+        private const WiringPiPin LeftMotorBPin = WiringPiPin.Pin10;
+        private const WiringPiPin RightMotorAPin = WiringPiPin.Pin13;
+        private const WiringPiPin RightMotorBPin = WiringPiPin.Pin12;
         private readonly ILogger logger;
 
         public MotorController(ILogger<MotorController> logger)
@@ -25,6 +29,15 @@ namespace rpi.gpio.Controllers
         {
             SetPinModes();
             TurnMotorsOff();
+            LogPinStatus(Pi.Gpio[LeftMotorAPin]);
+            LogPinStatus(Pi.Gpio[LeftMotorBPin]);
+            LogPinStatus(Pi.Gpio[RightMotorAPin]);
+            LogPinStatus(Pi.Gpio[RightMotorBPin]);
+        }
+
+        private void LogPinStatus(GpioPin pin)
+        {
+            logger.LogInformation($"WiringPiPinNumber: {pin.WiringPiPinNumber} BcmPinNumber: {pin.BcmPinNumber} Name:{pin.Name} Mode:{pin.PinMode}");
         }
 
         [HttpPut("{id}")]
@@ -45,38 +58,35 @@ namespace rpi.gpio.Controllers
 
         private static void SetPinModes()
         {
-            // Set the GPIO modes
-            Pi.Gpio.Pin07.PinMode = GpioPinDriveMode.Output;
-            Pi.Gpio.Pin08.PinMode = GpioPinDriveMode.Output;
-            Pi.Gpio.Pin09.PinMode = GpioPinDriveMode.Output;
-            Pi.Gpio.Pin10.PinMode = GpioPinDriveMode.Output;
+            Pi.Gpio[LeftMotorAPin].PinMode = GpioPinDriveMode.Output;
+            Pi.Gpio[LeftMotorBPin].PinMode = GpioPinDriveMode.Output;
+            Pi.Gpio[RightMotorAPin].PinMode = GpioPinDriveMode.Output;
+            Pi.Gpio[RightMotorBPin].PinMode = GpioPinDriveMode.Output;
         }
 
         private static void LeftMotor(bool forwards)
         {
-            Pi.Gpio.Pin07.PinMode = GpioPinDriveMode.Output;
-            Pi.Gpio.Pin08.PinMode = GpioPinDriveMode.Output;
-            //Turn the left motor forwards
-            Pi.Gpio.Pin07.Write(!forwards);
-            Pi.Gpio.Pin08.Write(forwards);
+            Pi.Gpio[LeftMotorAPin].PinMode = GpioPinDriveMode.Output;
+            Pi.Gpio[LeftMotorBPin].PinMode = GpioPinDriveMode.Output;
+            Pi.Gpio[LeftMotorAPin].Write(!forwards);
+            Pi.Gpio[LeftMotorBPin].Write(forwards);
         }
 
         private static void TurnMotorsOff()
         {
             //Turn all motors off
-            Pi.Gpio.Pin07.Write(false);
-            Pi.Gpio.Pin08.Write(false);
-            Pi.Gpio.Pin09.Write(false);
-            Pi.Gpio.Pin10.Write(false);
+            Pi.Gpio[LeftMotorAPin].Write(false);
+            Pi.Gpio[LeftMotorBPin].Write(false);
+            Pi.Gpio[RightMotorAPin].Write(false);
+            Pi.Gpio[RightMotorBPin].Write(false);
         }
 
         private static void RightMotor(bool forwards)
         {
-            Pi.Gpio.Pin09.PinMode = GpioPinDriveMode.Output;
-            Pi.Gpio.Pin10.PinMode = GpioPinDriveMode.Output;
-            //Turn the right motor forwards
-            Pi.Gpio.Pin09.Write(!forwards);
-            Pi.Gpio.Pin10.Write(forwards);
+            Pi.Gpio[RightMotorAPin].PinMode = GpioPinDriveMode.Output;
+            Pi.Gpio[RightMotorBPin].PinMode = GpioPinDriveMode.Output;
+            Pi.Gpio[RightMotorAPin].Write(!forwards);
+            Pi.Gpio[RightMotorBPin].Write(forwards);
         }
     }
 }
