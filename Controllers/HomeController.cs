@@ -5,7 +5,7 @@ using System;
 
 namespace rpi.gpio.Controllers
 {
-    [Route("")]
+    [Route("api/[controller]")]
     public class HomeController : Controller
     {
         
