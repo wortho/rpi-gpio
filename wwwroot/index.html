@@ -1,12 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <meta charset="utf-8" />
+    <title>Pi Robot Controller</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
 </head>
+
 <body>
-    Hello World!
+    <div class="jumbotron">
+        <h1>Control Pi</h1>
+        <p>
+            <a id="left" class="btn btn-primary btn-lg" role="button">Left</a>
+            <a id="right" class="btn btn-primary btn-lg" role="button">Right</a>
+            <a id="stop" class="btn btn-primary btn-lg" role="button">Stop</a>
+        </p>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script>
+        $("#left").click(function () {
+            $.ajax({
+                type: 'PUT',
+                url: 'api/motor/0',
+                headers: { "Content-Type": "application/json" },
+                data: 'true'
+            });
+        });
+        $("#right").click(function () {
+            $.ajax({
+                type: 'PUT',
+                url: 'api/motor/1',
+                headers: { "Content-Type": "application/json" },
+                data: 'true'
+            });
+        });
+        $("#stop").click(function () {
+            $.ajax({
+                type: 'PUT',
+                url: 'api/motor',
+                headers: { "Content-Type": "application/json" },
+                data: 'true'
+            });
+        });
+    </script>
 </body>
+
 </html>
