@@ -12,14 +12,26 @@
     <div class="jumbotron">
         <h1>Control Pi</h1>
         <p>
+            <a id="forward" class="btn btn-primary btn-lg" role="button">Forward</a>
             <a id="left" class="btn btn-primary btn-lg" role="button">Left</a>
             <a id="right" class="btn btn-primary btn-lg" role="button">Right</a>
+            <a id="reverse" class="btn btn-primary btn-lg" role="button">Reverse</a>
             <a id="stop" class="btn btn-primary btn-lg" role="button">Stop</a>
         </p>
+        <h1>Status Pi</h1>
+        <p id="status"></p>
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
         crossorigin="anonymous"></script>
     <script>
+        $("#forward").click(function () {
+            $.ajax({
+                type: 'PUT',
+                url: 'api/motor/2',
+                headers: { "Content-Type": "application/json" },
+                data: 'true'
+            });
+        });
         $("#left").click(function () {
             $.ajax({
                 type: 'PUT',
@@ -41,9 +53,34 @@
                 type: 'PUT',
                 url: 'api/motor',
                 headers: { "Content-Type": "application/json" },
-                data: 'true'
+                data: 'true',
+                success: function (data) {                
+                    GetStatus();
+                }
             });
         });
+        $("#reverse").click(function () {
+            $.ajax({
+                type: 'PUT',
+                url: 'api/motor/2',
+                headers: { "Content-Type": "application/json" },
+                data: 'false'
+            });
+        });
+        function GetStatus() {
+            $.ajax({
+                url: 'api/gpio',
+                type: 'GET',
+                dataType: 'json',            
+                success: function (data) {     
+                    var myJSON = JSON.stringify(data);           
+                    document.getElementById("status").innerHTML = myJSON;
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });        
+        }
     </script>
 </body>
 

@@ -21,7 +21,7 @@ namespace rpi.gpio.Controllers
                  if (pin.Capabilities.Contains(PinCapability.GP))
                  {
                     pin.PinMode = GpioPinDriveMode.Input;
-                    status.Add($"WiringPiPinNumber: {pin.WiringPiPinNumber} Name: {pin.Name} BcmPinNumber: {pin.BcmPinNumber} Value: {pin.Read()}\n");
+                    status.Add($"WiringPiPinNumber: {pin.WiringPiPinNumber} Name: {pin.Name} BcmPinNumber: {pin.BcmPinNumber} Value: {pin.Read()}");
                  }
             }
             return status;

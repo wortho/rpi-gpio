@@ -1,4 +1,5 @@
 # ASP.NET Web API for controlling Raspberry Pi GPIO with camjam motors.
+# Based on the example https://carlos.mendible.com/2017/09/01/toggle-raspberry-pi-gpio-pins-with-asp-net-core-20/
 
 ## build
 
@@ -12,8 +13,10 @@ scp -r bin/Release/netcoreapp2.0/linux-arm/publish  pi@192.168.0.23:projects/rpi
 scp -r bin/Release/netcoreapp2.0/linux-arm/publish/rpi.gpio*  pi@192.168.0.23:projects/rpi.gpio
 
 ## run on pi
+ssh pi@192.168.0.23
 
-cd home/pi/projects/rpi.gpio/
+sudo -i
+cd /home/pi/projects/rpi.gpio/
 chmod +x rpi.gpio
 export ASPNETCORE_URLS="http://*:5000"
 ./rpi.gpio
