@@ -11,6 +11,7 @@ scp -r bin/Release/netcoreapp2.0/linux-arm/publish  pi@192.168.0.23:projects/rpi
 
 ## update after rebuild
 scp -r bin/Release/netcoreapp2.0/linux-arm/publish/rpi.gpio*  pi@192.168.0.23:projects/rpi.gpio
+scp -r bin/Release/netcoreapp2.0/linux-arm/publish/wwwroot/*  pi@192.168.0.23:projects/rpi.gpio/wwwroot
 
 ## run on pi
 ssh pi@192.168.0.23
@@ -35,6 +36,11 @@ curl -X PUT -H "Content-Type: application/json" -d 'false' http://192.168.0.23:5
 ## left motor forwards
 curl -X PUT -H "Content-Type: application/json" -d 'true' http://192.168.0.23:5000/api/motor/0
 
-
 ## right motor backwards
 curl -X PUT -H "Content-Type: application/json" -d 'false' http://192.168.0.23:5000/api/motor/1
+
+## both motors forwards
+curl -X PUT -H "Content-Type: application/json" -d 'true' http://192.168.0.23:5000/api/motor/2
+
+## both motors backwards
+curl -X PUT -H "Content-Type: application/json" -d 'false' http://192.168.0.23:5000/api/motor/2
