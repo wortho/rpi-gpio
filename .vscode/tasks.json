@@ -7,7 +7,15 @@
         {
             "taskName": "build",
             "args": [
-                "${workspaceRoot}/rpi.gpio.csproj"
+                "${workspaceRoot}/src/rpi.gpio.csproj"
+            ],
+            "isBuildCommand": true,
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "taskName": "test",
+            "args": [
+                "${workspaceRoot}/tests/rpi.gpio.tests.csproj"
             ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"
