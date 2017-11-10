@@ -6,6 +6,7 @@
     <title>Pi Robot Controller</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
         crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -18,42 +19,56 @@
             <a id="reverse" class="btn btn-primary btn-lg" role="button">Reverse</a>
             <a id="stop" class="btn btn-primary btn-lg" role="button">Stop</a>
         </p>
+        <div id="slidecontainer"><input type="range" min="0" max="30" value="15" id="speedRange"/></div>
+        <p><span id="sliderValue"></span></p>
         <h1>Status Pi</h1>
         <p id="status"></p>
     </div>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-        crossorigin="anonymous"></script>
     <script>
+        var slider = document.getElementById("speedRange");
+        var s = document.getElementById("sliderValue");
+        s.innerHTML = slider.value;
+        slider.oninput = function () {
+            s.innerHTML = this.value;
+        }
         $("#forward").click(function () {
             $.ajax({
-                type: 'PUT',
-                url: 'api/motor/2',
+                type: 'POST',
+                url: 'api/driving/forward',
                 headers: { "Content-Type": "application/json" },
-                data: 'true'
+                data: slider.value,
+                success: function (data) {                
+                    GetStatus();
+                }
             });
         });
         $("#left").click(function () {
             $.ajax({
-                type: 'PUT',
-                url: 'api/motor/0',
+                type: 'POST',
+                url: 'api/driving/left',
                 headers: { "Content-Type": "application/json" },
-                data: 'true'
+                data: slider.value,
+                success: function (data) {                
+                    GetStatus();
+                }
             });
         });
         $("#right").click(function () {
             $.ajax({
-                type: 'PUT',
-                url: 'api/motor/1',
+                type: 'POST',
+                url: 'api/driving/right',
                 headers: { "Content-Type": "application/json" },
-                data: 'true'
+                data: slider.value,
+                success: function (data) {                
+                    GetStatus();
+                }
             });
         });
         $("#stop").click(function () {
             $.ajax({
-                type: 'PUT',
-                url: 'api/motor',
+                type: 'POST',
+                url: 'api/driving/stop',
                 headers: { "Content-Type": "application/json" },
-                data: 'true',
                 success: function (data) {                
                     GetStatus();
                 }
@@ -61,15 +76,18 @@
         });
         $("#reverse").click(function () {
             $.ajax({
-                type: 'PUT',
-                url: 'api/motor/2',
+                type: 'POST',
+                url: 'api/driving/reverse',
                 headers: { "Content-Type": "application/json" },
-                data: 'false'
+                data: slider.value,
+                success: function (data) {                
+                    GetStatus();
+                }
             });
         });
         function GetStatus() {
             $.ajax({
-                url: 'api/gpio',
+                url: 'api/motor',
                 type: 'GET',
                 dataType: 'json',            
                 success: function (data) {     
