@@ -23,10 +23,10 @@ namespace rpi.gpio.Controllers
         public void PutMotors([FromBody] bool on)
         {
             Motors.TurnMotorsOff();
-            logger.LogInformation(Motors.GetStatus(Motors.LeftMotorAPin));
-            logger.LogInformation(Motors.GetStatus(Motors.LeftMotorBPin));
-            logger.LogInformation(Motors.GetStatus(Motors.RightMotorAPin));
-            logger.LogInformation(Motors.GetStatus(Motors.RightMotorBPin));
+            logger.LogInformation(Motors.GetStatus(Motors.LeftMotorForwardsPin));
+            logger.LogInformation(Motors.GetStatus(Motors.LeftMotorReversePin));
+            logger.LogInformation(Motors.GetStatus(Motors.RightMotorReversePin));
+            logger.LogInformation(Motors.GetStatus(Motors.RightMotorForwardsPin));
         }
 
         [HttpGet]
@@ -45,10 +45,6 @@ namespace rpi.gpio.Controllers
                     Motors.LeftMotor(forward);
                     break;
                 case 1:
-                    Motors.RightMotor(forward);
-                    break;
-                case 2:
-                    Motors.LeftMotor(forward);
                     Motors.RightMotor(forward);
                     break;
                 default:
