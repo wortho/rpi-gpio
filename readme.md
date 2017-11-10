@@ -3,44 +3,43 @@
 
 ## build
 
-dotnet publish -c Release -r linux-arm
+dotnet publish src -c Release -r linux-arm
 
 ## initial deploy to Pi
 
-scp -r bin/Release/netcoreapp2.0/linux-arm/publish  pi@192.168.0.23:projects/rpi.gpio
+scp -r src/bin/Release/netcoreapp2.0/linux-arm/publish  pi@192.168.0.32:projects/rpi.gpio
 
 ## update after rebuild
-scp -r bin/Release/netcoreapp2.0/linux-arm/publish/rpi.gpio*  pi@192.168.0.23:projects/rpi.gpio
-scp -r bin/Release/netcoreapp2.0/linux-arm/publish/wwwroot/*  pi@192.168.0.23:projects/rpi.gpio/wwwroot
+scp -r src/bin/Release/netcoreapp2.0/linux-arm/publish/rpi.gpio*  pi@192.168.0.32:projects/rpi.gpio/publish
+scp -r src/bin/Release/netcoreapp2.0/linux-arm/publish/wwwroot/*  pi@192.168.0.32:projects/rpi.gpio/publish/wwwroot
 
 ## run on pi
-ssh pi@192.168.0.23
+ssh pi@192.168.0.32
 
 sudo -i
-cd /home/pi/projects/rpi.gpio/
-chmod +x rpi.gpio
+chmod +x /home/pi/projects/rpi.gpio/publish/rpi.gpio
 export ASPNETCORE_URLS="http://*:5000"
-./rpi.gpio
+/home/pi/projects/rpi.gpio/publish/rpi.gpio
 
 ## call status endpoints
 
-curl http://192.168.0.23:5000
+curl http://192.168.0.32:5000
 
-curl http://192.168.0.23:5000/api/status
+curl http://192.168.0.32:5000/api/status
 
-curl http://192.168.0.23:5000/api/gpio
+curl http://192.168.0.32:5000/api/gpio
 
 ## turn off all motors
-curl -X PUT -H "Content-Type: application/json" -d 'false' http://192.168.0.23:5000/api/motor 
+curl -X PUT -H "Content-Type: application/json" -d 'false' http://192.168.0.32:5000/api/motor 
 
 ## left motor forwards
-curl -X PUT -H "Content-Type: application/json" -d 'true' http://192.168.0.23:5000/api/motor/0
+curl -X PUT -H "Content-Type: application/json" -d 'true' http://192.168.0.32:5000/api/motor/0
 
 ## right motor backwards
-curl -X PUT -H "Content-Type: application/json" -d 'false' http://192.168.0.23:5000/api/motor/1
+curl -X PUT -H "Content-Type: application/json" -d 'false' http://192.168.0.32:5000/api/motor/1
 
 ## both motors forwards
-curl -X PUT -H "Content-Type: application/json" -d 'true' http://192.168.0.23:5000/api/motor/2
+curl -X PUT -H "Content-Type: application/json" -d 'true' http://192.168.0.32:5000/api/motor/2
 
 ## both motors backwards
-curl -X PUT -H "Content-Type: application/json" -d 'false' http://192.168.0.23:5000/api/motor/2
+curl -X PUT -H "Content-Type: application/json" -d 'false' http://192.168.0.32:5000/api/motor/2
