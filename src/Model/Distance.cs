@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Unosquare.RaspberryIO;
 using Unosquare.RaspberryIO.Gpio;
@@ -8,9 +10,32 @@ namespace rpi.gpio.Model
 {
     public static class Distance
     { 
+        public static decimal CurrentDistance { get; private set; }
+        private static Task monitorTask;
+        public static void MonitorDistance(ILogger logger, CancellationToken token)
+        {
+            if (monitorTask != null && !monitorTask.IsCompleted)
+            {
+                return;
+            }
+            monitorTask = Task.Run(() =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    CurrentDistance = MeasureDistance(logger);
+                    if (CurrentDistance <= 0.10m)
+                    {
+                        logger.LogInformation($"Stopping due to obstacle: {CurrentDistance}");
+                        Driving.Stop();
+                        break;
+                    }
+                }
+            });
+            return;
+        }
         public const WiringPiPin TriggerPin = WiringPiPin.Pin00;
         public const WiringPiPin EchoPin = WiringPiPin.Pin01;
-        public static decimal MeasureDistance(ILogger logger)
+        private static decimal MeasureDistance(ILogger logger)
         {
             GpioPin triggerPin = Pi.Gpio[TriggerPin];
             GpioPin echoPin = Pi.Gpio[EchoPin];
@@ -25,21 +50,16 @@ namespace rpi.gpio.Model
 
             var stopwatch = Stopwatch.StartNew();
             //Loop until the Echo pin is taken high (==1)
-            while (!echoPin.Read())
-            {
-                stopwatch.Restart(); 
-            }
+            while (!echoPin.Read() && stopwatch.ElapsedMilliseconds < 500);
+            stopwatch.Restart(); 
             // Loop until it goes low again
-            while (echoPin.Read() && stopwatch.ElapsedMilliseconds < 1000);
+            while (echoPin.Read() && stopwatch.ElapsedMilliseconds < 500);
             stopwatch.Stop();
             var duration = (decimal) stopwatch.ElapsedTicks / (decimal) Stopwatch.Frequency;
             var distance = CalulateDistance(duration);
             logger.LogInformation($"Distance: {distance}");
             return distance;
         }
-
-        public static string GetStatus(GpioPin pin) =>
-            $" Name:{pin.Name} Mode:{pin.PinMode} Value:{pin.ReadValue()}";
 
         public static decimal CalulateDistance(decimal secs) => (secs * 343.26m) / 2.0m;
     }

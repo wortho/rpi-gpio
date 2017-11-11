@@ -22,6 +22,7 @@ namespace rpi.gpio.Controllers
         [HttpPost("forward")]
         public IActionResult Forward([FromBody] int speed = 10)
         {
+            Distance.MonitorDistance(logger, CancellationToken.None);
             Driving.Forward(speed);
             return new AcceptedResult();
         }
@@ -29,6 +30,7 @@ namespace rpi.gpio.Controllers
         [HttpPost("left")]
         public IActionResult Left([FromBody] int speed = 10)
         {
+            Distance.MonitorDistance(logger, CancellationToken.None);
             Driving.Left(speed);
             return new AcceptedResult();
         }
@@ -36,6 +38,7 @@ namespace rpi.gpio.Controllers
         [HttpPost("right")]
         public IActionResult Right([FromBody] int speed = 10)
         {
+            Distance.MonitorDistance(logger, CancellationToken.None);
             Driving.Right(speed);
             return new AcceptedResult();
         }

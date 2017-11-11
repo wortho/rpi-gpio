@@ -2,6 +2,8 @@ using rpi.gpio.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace rpi.gpio.Controllers
 {
@@ -15,6 +17,10 @@ namespace rpi.gpio.Controllers
         }
 
         [HttpGet]
-        public decimal Get() => Distance.MeasureDistance(logger);
+        public decimal Get()
+        {
+            Distance.MonitorDistance(logger, CancellationToken.None);
+            return Distance.CurrentDistance;
+        } 
     }
 }
