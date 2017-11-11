@@ -17,9 +17,10 @@ scp -r src/bin/Release/netcoreapp2.0/linux-arm/publish/wwwroot/*  pi@192.168.0.3
 ssh pi@192.168.0.32
 
 sudo -i
-chmod +x /home/pi/projects/rpi.gpio/publish/rpi.gpio
+cd /home/pi/projects/rpi.gpio/publish/
+chmod +x rpi.gpio
 export ASPNETCORE_URLS="http://*:5000"
-/home/pi/projects/rpi.gpio/publish/rpi.gpio
+./rpi.gpio
 
 ## call status endpoints
 
@@ -43,3 +44,5 @@ curl -X PUT -H "Content-Type: application/json" -d 'true' http://192.168.0.32:50
 
 ## both motors backwards
 curl -X PUT -H "Content-Type: application/json" -d 'false' http://192.168.0.32:5000/api/motor/2
+
+curl http://192.168.0.32:5000/api/distance
