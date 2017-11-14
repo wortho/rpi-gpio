@@ -6,7 +6,9 @@ using Unosquare.RaspberryIO.Gpio;
 namespace rpi.gpio.Model
 {
     public static class Driving
-    { 
+    {
+        public static bool MovingForwards { get; private set; }
+
         public static void Forward(int speed)
         {
             SetupMotors();
@@ -14,6 +16,7 @@ namespace rpi.gpio.Model
             Pi.Gpio[Motors.LeftMotorReversePin].SoftPwmValue = 0;
             Pi.Gpio[Motors.RightMotorForwardsPin].SoftPwmValue = speed;
             Pi.Gpio[Motors.RightMotorReversePin].SoftPwmValue = 0;
+            MovingForwards = true;
         }
 
         public static void Reverse(int speed)
@@ -23,6 +26,7 @@ namespace rpi.gpio.Model
             Pi.Gpio[Motors.LeftMotorForwardsPin].SoftPwmValue = 0;
             Pi.Gpio[Motors.RightMotorReversePin].SoftPwmValue = speed;
             Pi.Gpio[Motors.RightMotorForwardsPin].SoftPwmValue = 0;
+            MovingForwards = false;
         }
 
         internal static void Left(int speed)
@@ -32,6 +36,7 @@ namespace rpi.gpio.Model
             Pi.Gpio[Motors.LeftMotorReversePin].SoftPwmValue = 0;
             Pi.Gpio[Motors.RightMotorForwardsPin].SoftPwmValue = speed;
             Pi.Gpio[Motors.RightMotorReversePin].SoftPwmValue = 0;
+            MovingForwards = true;
         }
 
         
@@ -42,6 +47,7 @@ namespace rpi.gpio.Model
             Pi.Gpio[Motors.LeftMotorReversePin].SoftPwmValue = 0;
             Pi.Gpio[Motors.RightMotorForwardsPin].SoftPwmValue = 0;
             Pi.Gpio[Motors.RightMotorReversePin].SoftPwmValue = 0;
+            MovingForwards = true;
         }
 
         public static void Stop()
@@ -51,6 +57,7 @@ namespace rpi.gpio.Model
             Pi.Gpio[Motors.LeftMotorForwardsPin].SoftPwmValue = 0;
             Pi.Gpio[Motors.RightMotorReversePin].SoftPwmValue = 0;
             Pi.Gpio[Motors.RightMotorForwardsPin].SoftPwmValue = 0;
+            MovingForwards = false;
         }
 
         private static void SetupMotors()
