@@ -12,6 +12,8 @@
 <body>
     <div class="jumbotron">
         <h1>Control Pi</h1>
+    </div>
+    <div>
         <p>
             <a id="forward" class="btn btn-primary btn-lg" role="button">Forward</a>
             <a id="left" class="btn btn-primary btn-lg" role="button">Left</a>
@@ -23,6 +25,17 @@
         <p><span id="sliderValue"></span></p>
         <h1>Status Pi</h1>
         <p id="status"></p>
+    </div>
+    <div>
+        <p id="stateLabel">Ready to connect...</p>
+        <div>
+            <button id="connectButton" type="submit">Connect</button>
+        </div>
+        <p></p>
+        <div>
+            <button id="closeButton" disabled>Close Socket</button>
+        </div>
+        <p id="dataLabel"></p>
     </div>
     <script>
         var slider = document.getElementById("speedRange");
@@ -98,6 +111,82 @@
                     alert(x + '\n' + y + '\n' + z);
                 }
             });        
+        }
+        var connectButton = document.getElementById("connectButton");
+        var stateLabel = document.getElementById("stateLabel");
+        var dataLabel = document.getElementById("dataLabel");
+        var socket;
+        var scheme = document.location.protocol == "https:" ? "wss" : "ws";
+        var port = document.location.port ? (":" + document.location.port) : "";
+        var connectionUrl = scheme + "://" + document.location.hostname + port + "/api/driving/ws" ;
+
+        function updateState() {
+            function disable() {
+                closeButton.disabled = true;
+                connectButton.disabled = false;
+            }
+            function enable() {
+                closeButton.disabled = false;
+                connectButton.disabled = true;
+            }
+
+            if (!socket) {
+                disable();
+            } else {
+                switch (socket.readyState) {
+                    case WebSocket.CLOSED:
+                        stateLabel.innerHTML = "Closed";
+                        disable();
+                        break;
+                    case WebSocket.CLOSING:
+                        stateLabel.innerHTML = "Closing...";
+                        disable();
+                        break;
+                    case WebSocket.CONNECTING:
+                        stateLabel.innerHTML = "Connecting...";
+                        disable();
+                        break;
+                    case WebSocket.OPEN:
+                        stateLabel.innerHTML = "Open";
+                        enable();
+                        break;
+                    default:
+                        stateLabel.innerHTML = "Unknown WebSocket State: " + htmlEscape(socket.readyState);
+                        disable();
+                        break;
+                }
+            }
+        }
+
+        closeButton.onclick = function () {
+            if (!socket || socket.readyState != WebSocket.OPEN) {
+                stateLabel.innerHTML = "socket not connected!";
+            }
+            socket.close(1000, "Closing from client");
+            updateState();
+        }
+        connectButton.onclick = function() {
+            stateLabel.innerHTML = "Connecting";
+            socket = new WebSocket(connectionUrl);
+            socket.onopen = function (event) {
+                updateState();
+            };
+            socket.onclose = function (event) {
+                updateState();
+            };
+            socket.onerror = updateState;
+            socket.onmessage = function (event) {
+                dataLabel.innerHTML = htmlEscape(event.data);
+            };
+        };
+
+        function htmlEscape(str) {
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
         }
     </script>
 </body>
