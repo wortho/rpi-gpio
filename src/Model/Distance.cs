@@ -12,7 +12,7 @@ namespace rpi.gpio.Model
     { 
         public static decimal CurrentDistance { get; private set; }
         private static Task monitorTask;
-        public static void MonitorDistance(ILogger logger, CancellationToken token)
+        public static void MonitorDistance(ILogger logger, CancellationToken token, Action<decimal> distanceChanged)
         {
             if (monitorTask != null && !monitorTask.IsCompleted)
             {
@@ -22,11 +22,14 @@ namespace rpi.gpio.Model
             {
                 while (!token.IsCancellationRequested)
                 {
-                    CurrentDistance = MeasureDistance(logger);
-                    if (Driving.MovingForwards && CurrentDistance <= 0.10m)
+                    var newDistance = MeasureDistance();
+                    if (Math.Abs(CurrentDistance-newDistance) > 0.005m)
                     {
-                        logger.LogInformation($"Stopping due to obstacle: {CurrentDistance}");
-                        Driving.Stop();
+                        CurrentDistance = newDistance;   
+                        if (distanceChanged != null)
+                        {
+                            distanceChanged(newDistance);
+                        }      
                     }
                 }
             });
@@ -34,7 +37,7 @@ namespace rpi.gpio.Model
         }
         public const WiringPiPin TriggerPin = WiringPiPin.Pin00;
         public const WiringPiPin EchoPin = WiringPiPin.Pin01;
-        private static decimal MeasureDistance(ILogger logger)
+        public static decimal MeasureDistance()
         {
             GpioPin triggerPin = Pi.Gpio[TriggerPin];
             GpioPin echoPin = Pi.Gpio[EchoPin];
@@ -54,12 +57,10 @@ namespace rpi.gpio.Model
             // Loop until it goes low again
             while (echoPin.Read() && stopwatch.ElapsedMilliseconds < 500);
             stopwatch.Stop();
-            var duration = (decimal) stopwatch.ElapsedTicks / (decimal) Stopwatch.Frequency;
-            var distance = CalulateDistance(duration);
-            logger.LogInformation($"Distance: {distance}");
+            var distance = CalulateDistance((decimal)stopwatch.Elapsed.TotalSeconds);
             return distance;
         }
 
-        public static decimal CalulateDistance(decimal secs) => (secs * 343.26m) / 2.0m;
+        public static decimal CalulateDistance(decimal elapsedSeconds) => (elapsedSeconds * 343.26m) / 2.0m;
     }
 }

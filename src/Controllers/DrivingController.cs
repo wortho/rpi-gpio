@@ -25,7 +25,6 @@ namespace rpi.gpio.Controllers
         [HttpPost("forward")]
         public IActionResult Forward([FromBody] int speed = 10)
         {
-            Distance.MonitorDistance(logger, CancellationToken.None);
             Driving.Forward(speed);
             return new AcceptedResult();
         }
@@ -33,7 +32,6 @@ namespace rpi.gpio.Controllers
         [HttpPost("left")]
         public IActionResult Left([FromBody] int speed = 10)
         {
-            Distance.MonitorDistance(logger, CancellationToken.None);
             Driving.Left(speed);
             return new AcceptedResult();
         }
@@ -41,7 +39,6 @@ namespace rpi.gpio.Controllers
         [HttpPost("right")]
         public IActionResult Right([FromBody] int speed = 10)
         {
-            Distance.MonitorDistance(logger, CancellationToken.None);
             Driving.Right(speed);
             return new AcceptedResult();
         }
@@ -65,7 +62,7 @@ namespace rpi.gpio.Controllers
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)
             {
-                Distance.MonitorDistance(logger, CancellationToken.None);
+                Distance.MonitorDistance(logger, CancellationToken.None, CheckDistance);
                 WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
                 logger.LogInformation($"WebSocket State:{webSocket.State}");
                 await SendStatus(HttpContext, webSocket);
@@ -73,6 +70,15 @@ namespace rpi.gpio.Controllers
             else
             {                
                 throw new HttpRequestException();
+            }
+        }
+
+        private void CheckDistance(decimal distance)
+        {            
+            if (Driving.MovingForwards && distance <= 0.10m)
+            {
+                logger.LogInformation($"Stopping due to obstacle at: {distance}m");
+                Driving.Stop();
             }
         }
 

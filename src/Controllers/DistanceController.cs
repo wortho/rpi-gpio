@@ -19,8 +19,8 @@ namespace rpi.gpio.Controllers
         [HttpGet]
         public decimal Get()
         {
-            Distance.MonitorDistance(logger, CancellationToken.None);
-            return Distance.CurrentDistance;
-        } 
+            return Distance.MeasureDistance();
+        }
+
     }
 }
