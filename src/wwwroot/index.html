@@ -44,74 +44,33 @@
         slider.oninput = function () {
             s.innerHTML = this.value;
         }
-        $("#forward").click(function () {
+        
+        function SendDrivingCommand(command) {
             $.ajax({
+                url: 'api/driving/'+command,
                 type: 'POST',
-                url: 'api/driving/forward',
+                dataType: 'json',       
                 headers: { "Content-Type": "application/json" },
-                data: slider.value,
-                success: function (data) {                
-                    GetStatus();
-                }
-            });
-        });
-        $("#left").click(function () {
-            $.ajax({
-                type: 'POST',
-                url: 'api/driving/left',
-                headers: { "Content-Type": "application/json" },
-                data: slider.value,
-                success: function (data) {                
-                    GetStatus();
-                }
-            });
-        });
-        $("#right").click(function () {
-            $.ajax({
-                type: 'POST',
-                url: 'api/driving/right',
-                headers: { "Content-Type": "application/json" },
-                data: slider.value,
-                success: function (data) {                
-                    GetStatus();
-                }
-            });
-        });
-        $("#stop").click(function () {
-            $.ajax({
-                type: 'POST',
-                url: 'api/driving/stop',
-                headers: { "Content-Type": "application/json" },
-                success: function (data) {                
-                    GetStatus();
-                }
-            });
-        });
-        $("#reverse").click(function () {
-            $.ajax({
-                type: 'POST',
-                url: 'api/driving/reverse',
-                headers: { "Content-Type": "application/json" },
-                data: slider.value,
-                success: function (data) {                
-                    GetStatus();
-                }
-            });
-        });
-        function GetStatus() {
-            $.ajax({
-                url: 'api/motor',
-                type: 'GET',
-                dataType: 'json',            
-                success: function (data) {     
-                    var myJSON = JSON.stringify(data);           
-                    document.getElementById("status").innerHTML = myJSON;
-                },
-                error: function (x, y, z) {
-                    alert(x + '\n' + y + '\n' + z);
-                }
+                data: slider.value
             });        
         }
+
+        $("#forward").click(function () {
+            SendDrivingCommand("forward")
+        });
+        $("#left").click(function () {
+            SendDrivingCommand("left")
+        });
+        $("#right").click(function () {
+            SendDrivingCommand("right")
+        });
+        $("#stop").click(function () {
+            SendDrivingCommand("stop")
+        });
+        $("#reverse").click(function () {
+            SendDrivingCommand("reverse")
+        });
+
         var connectButton = document.getElementById("connectButton");
         var stateLabel = document.getElementById("stateLabel");
         var dataLabel = document.getElementById("dataLabel");
