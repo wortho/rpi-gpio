@@ -75,10 +75,10 @@ namespace rpi.gpio.Controllers
 
         private void CheckDistance(decimal distance)
         {            
-            logger.LogInformation($"Distance: {distance}m");
-            if (Driving.MovingForwards && distance <= 0.10m)
+            logger.LogInformation($"Time: {System.DateTime.Now}, Distance: {distance}m");
+            if (Driving.MovingForwards && distance <= 0.20m)
             {
-                logger.LogInformation($"Stopping due to obstacle at: {distance}m");
+                logger.LogInformation($"Time: {System.DateTime.Now}, Stopping due to obstacle at: {distance}m");
                 Driving.Stop();
             }
         }
