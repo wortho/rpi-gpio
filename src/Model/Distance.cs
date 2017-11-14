@@ -23,11 +23,10 @@ namespace rpi.gpio.Model
                 while (!token.IsCancellationRequested)
                 {
                     CurrentDistance = MeasureDistance(logger);
-                    if (CurrentDistance <= 0.10m)
+                    if (Driving.MovingForwards && CurrentDistance <= 0.10m)
                     {
                         logger.LogInformation($"Stopping due to obstacle: {CurrentDistance}");
                         Driving.Stop();
-                        break;
                     }
                 }
             });
