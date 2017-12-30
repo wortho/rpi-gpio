@@ -32,14 +32,14 @@ namespace rpi.gpio.Controllers
         [HttpPost("left")]
         public IActionResult Left([FromBody] int speed = 10)
         {
-            Driving.Left(speed);
+            Driving.Left((int)(speed*1.5m));
             return new AcceptedResult();
         }
 
         [HttpPost("right")]
         public IActionResult Right([FromBody] int speed = 10)
         {
-            Driving.Right(speed);
+            Driving.Right((int)(speed*1.5m));
             return new AcceptedResult();
         }
 
