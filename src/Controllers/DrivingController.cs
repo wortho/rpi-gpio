@@ -32,14 +32,14 @@ namespace rpi.gpio.Controllers
         [HttpPost("left")]
         public IActionResult Left([FromBody] int speed = 10)
         {
-            Driving.Left((int)(speed*1.5m));
+            Driving.Left(speed);
             return new AcceptedResult();
         }
 
         [HttpPost("right")]
         public IActionResult Right([FromBody] int speed = 10)
         {
-            Driving.Right((int)(speed*1.5m));
+            Driving.Right(speed);
             return new AcceptedResult();
         }
 
@@ -62,7 +62,7 @@ namespace rpi.gpio.Controllers
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)
             {
-                Distance.MonitorDistance(logger, CancellationToken.None, CheckDistance);
+                Distance.MonitorDistance(logger, CancellationToken.None, Driving.CheckDistance);
                 WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
                 logger.LogInformation($"WebSocket State:{webSocket.State}");
                 await SendStatus(HttpContext, webSocket);
@@ -73,23 +73,13 @@ namespace rpi.gpio.Controllers
             }
         }
 
-        private void CheckDistance(decimal distance)
-        {            
-            logger.LogInformation($"Time: {System.DateTime.Now}, Distance: {distance}m");
-            if (Driving.MovingForwards && distance <= 0.20m)
-            {
-                logger.LogInformation($"Time: {System.DateTime.Now}, Stopping due to obstacle at: {distance}m");
-                Driving.Stop();
-            }
-        }
-
         private async Task SendStatus(HttpContext context, WebSocket webSocket)
         {
             var buffer = new byte[1024 * 4];
             var resultTask = webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             while (!resultTask.IsCompleted && webSocket.State == WebSocketState.Open)
             {
-                var response = string.Format($"Time: {System.DateTime.Now}, Moving {Driving.MovingForwards}, Distance: {Distance.CurrentDistance}");
+                var response = string.Format($"Time: {System.DateTime.Now}, State: {Driving.State}, Speed:{Driving.Speed}, Distance: {Distance.CurrentDistance}");
                 var bytes = System.Text.Encoding.UTF8.GetBytes(response);
                 await webSocket.SendAsync(
                     new System.ArraySegment<byte>(bytes),
