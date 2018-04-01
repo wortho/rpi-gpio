@@ -35,7 +35,10 @@
         <div>
             <button id="closeButton" disabled>Close Socket</button>
         </div>
-        <p id="dataLabel"></p>
+        <div>
+            <label for="comment">Status:</label>
+            <textarea class="form-control" rows="20" id="dataLabel" readonly></textarea>
+        </div>
     </div>
     <script>
         var slider = document.getElementById("speedRange");
@@ -135,7 +138,7 @@
             };
             socket.onerror = updateState;
             socket.onmessage = function (event) {
-                dataLabel.innerHTML = htmlEscape(event.data);
+                dataLabel.innerHTML = htmlEscape(event.data) + "\n" + dataLabel.innerHTML.substring(0,4096);
             };
         };
 
